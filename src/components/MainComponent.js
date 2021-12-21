@@ -8,6 +8,7 @@ import Header from "./HeaderComponent";
 import Footer from "./FooterComponent";
 import { Switch, Route, Redirect, withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
+import { addComment } from "../redux/ActionCreators";
 
 const mapStateToProps = state => {
   return {
@@ -18,20 +19,18 @@ const mapStateToProps = state => {
   }
 }
 
-class Main extends Component {
+const mapDispatchToProps = (dispatch) => ({
+  addComment: (dishId, rating, author, comment) => dispatch(addComment(dishId, rating, author, comment))
+});
 
-  // constructor(props) {
-  //   super(props);
-  // }
+class Main extends Component {
 
   render() {
 
-    // Mục đích : Hiện thi nội dung Home page screen 
-    // Truyền dữ liệu cho hàm Home 
     const HomePage = () => {
       return(
         <Home 
-          dish={this.props.dishes.filter((dish) => dish.featured)[0]} //filter: tạo mảng mới chứa các phần tử có featured = true
+          dish={this.props.dishes.filter((dish) => dish.featured)[0]}
           promotion={this.props.promotions.filter((promo) => promo.featured)[0]}
           leader={this.props.leaders.filter((leader) => leader.featured)[0]}
         />
@@ -42,14 +41,11 @@ class Main extends Component {
       return(
         <DishDetail dish={this.props.dishes.filter((dish) => dish.id === parseInt(match.params.dishId,10))[0]}
           comments={this.props.comments.filter((comment) => comment.dishId === parseInt(match.params.dishId,10))}
+          addComment={this.props.addComment}
         />
       );
     }
-    // Trả về giá trị HTML hoặc sẽ gọi đến 1 component khác 
-    // Route sử dụng để định nghĩa path trong 
-    // Redirect đặt mặc định trang hiển thị
-    // exact path: dùng cho component cha
-    // path: dùng cho component con
+ 
     return(
       <div>
         <Header />
@@ -67,4 +63,4 @@ class Main extends Component {
   }
 }
 
-export default withRouter(connect(mapStateToProps)(Main));
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(Main));
